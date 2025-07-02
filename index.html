@@ -3,68 +3,110 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Daily Random Number</title>
+  <title>Your Lottery Number</title>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: #f5f5f5;
+      background: linear-gradient(135deg, #ffe259, #ffa751);
       font-family: 'Segoe UI', sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: hidden;
     }
 
-    #number-container {
-      font-size: 5rem;
-      color: #333;
+    .lottery-card {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      padding: 40px 60px;
+      text-align: center;
+      animation: fadeInUp 1s ease forwards;
+      transform: translateY(20px);
       opacity: 0;
-      transform: scale(0.8);
-      animation: fadeZoomIn 1.5s forwards;
     }
 
-    @keyframes fadeZoomIn {
+    @keyframes fadeInUp {
       to {
+        transform: translateY(0);
         opacity: 1;
-        transform: scale(1);
       }
     }
 
+    .title {
+      font-size: 2rem;
+      color: #d35400;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .number {
+      font-size: 3.5rem;
+      color: #2c3e50;
+      letter-spacing: 6px;
+      background: linear-gradient(to right, #e74c3c, #e67e22);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: zoomIn 1.5s ease-in-out;
+    }
+
+    @keyframes zoomIn {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .date {
+      margin-top: 15px;
+      font-size: 1rem;
+      color: #7f8c8d;
+    }
+
     @media (max-width: 600px) {
-      #number-container {
-        font-size: 3rem;
+      .lottery-card {
+        padding: 30px 20px;
+      }
+      .number {
+        font-size: 2.5rem;
+      }
+      .title {
+        font-size: 1.5rem;
       }
     }
   </style>
 </head>
 <body>
-  <div id="number-container"></div>
+  <div class="lottery-card">
+    <div class="title">🎉 Your Lucky Lottery Number 🎉</div>
+    <div id="number" class="number">---------</div>
+    <div id="date" class="date"></div>
+  </div>
 
   <script>
     function getISTDate() {
       const now = new Date();
-      // IST is UTC+5:30
       const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-      return new Date(utc + (3600000 * 5.5));
+      return new Date(utc + 5.5 * 3600000);
     }
 
     function getTodayKey() {
       const ist = getISTDate();
-      return ist.toISOString().split("T")[0]; // YYYY-MM-DD
+      return ist.toISOString().split("T")[0];
     }
 
     function generateRandomNumber() {
-      return Math.floor(Math.random() * 1000000); // you can change the range
+      return Math.floor(100000000 + Math.random() * 900000000); // 9-digit number
     }
 
-    function showNumber(number) {
-      const container = document.getElementById('number-container');
-      container.textContent = number;
-      container.style.animation = 'none';
-      container.offsetHeight; // trigger reflow
-      container.style.animation = null;
+    function showNumber(number, dateStr) {
+      document.getElementById('number').textContent = number;
+      document.getElementById('date').textContent = `Date: ${dateStr}`;
     }
 
     function updateNumber() {
@@ -74,16 +116,14 @@
       if (savedData.date !== todayKey) {
         const newNumber = generateRandomNumber();
         localStorage.setItem("dailyNumber", JSON.stringify({ date: todayKey, number: newNumber }));
-        showNumber(newNumber);
+        showNumber(newNumber, todayKey);
       } else {
-        showNumber(savedData.number);
+        showNumber(savedData.number, todayKey);
       }
     }
 
     updateNumber();
-
-    // Auto-refresh the number every 1 minute to catch day change without reload
-    setInterval(updateNumber, 60000);
+    setInterval(updateNumber, 60000); // Auto-refresh every 1 min
   </script>
 </body>
 </html>
