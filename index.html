@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Lottery Number</title>
+  <title>Your 9-Digit Lottery Number</title>
   <style>
     body {
       margin: 0;
@@ -42,7 +42,7 @@
     }
 
     .number {
-      font-size: 3.5rem;
+      font-size: 3rem;
       color: #2c3e50;
       letter-spacing: 6px;
       background: linear-gradient(to right, #e74c3c, #e67e22);
@@ -101,7 +101,8 @@
     }
 
     function generateRandomNumber() {
-      return Math.floor(100000000 + Math.random() * 900000000); // 9-digit number
+      // 9-digit number: 100000000 to 999999999
+      return Math.floor(100000000 + Math.random() * 900000000);
     }
 
     function showNumber(number, dateStr) {
@@ -113,7 +114,7 @@
       const todayKey = getTodayKey();
       const savedData = JSON.parse(localStorage.getItem("dailyNumber") || "{}");
 
-      if (savedData.date !== todayKey) {
+      if (savedData.date !== todayKey || String(savedData.number).length !== 9) {
         const newNumber = generateRandomNumber();
         localStorage.setItem("dailyNumber", JSON.stringify({ date: todayKey, number: newNumber }));
         showNumber(newNumber, todayKey);
@@ -123,7 +124,7 @@
     }
 
     updateNumber();
-    setInterval(updateNumber, 60000); // Auto-refresh every 1 min
+    setInterval(updateNumber, 60000);
   </script>
 </body>
 </html>
